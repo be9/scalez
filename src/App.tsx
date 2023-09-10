@@ -1,25 +1,38 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Container, CssBaseline, Typography } from '@mui/material';
+import { Scale } from './Scale';
+import { blue, red } from '@mui/material/colors';
 
 function App() {
+  let theme = createTheme();
+
+  theme = createTheme(theme, {
+    palette: {
+      low: theme.palette.augmentColor({
+        color: {
+          main: blue[500],
+        },
+        name: 'low',
+      }),
+
+      high: theme.palette.augmentColor({
+        color: {
+          main: red[500],
+        },
+        name: 'low',
+      }),
+    },
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Container component="main" maxWidth="lg" sx={{ textAlign: 'center' }}>
+        <CssBaseline />
+        <Typography variant="h2">Лад</Typography>
+        <Scale />
+      </Container>
+    </ThemeProvider>
   );
 }
 
