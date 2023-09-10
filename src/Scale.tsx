@@ -81,8 +81,7 @@ const DegreeInformation = ({
         }
       >
         <p>
-          Абс.{' '}
-          {/*<Chip label={highCount-lowCount} size="small" />*/}
+          Абс. {/*<Chip label={highCount-lowCount} size="small" />*/}
           {highCount - lowCount}
         </p>
       </Tooltip>
@@ -155,11 +154,16 @@ export function Scale() {
     }
 
     const { accidental } = degrees[idx];
+
     if (accidental === 'sharp' && direction === 'raise') {
       return false;
     }
 
     if (accidental === 'flat' && direction === 'lower') {
+      return false;
+    }
+
+    if (accidental === 'natural' && direction === 'raise' && idx === 6) {
       return false;
     }
 
