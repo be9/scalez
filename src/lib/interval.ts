@@ -5,8 +5,7 @@ export type Quality =
   | 'augmented'
   | 'diminished'
   | 'double-augmented'
-  | 'double-diminished'
-  ;
+  | 'double-diminished';
 
 export interface Interval {
   /** 1..7 */

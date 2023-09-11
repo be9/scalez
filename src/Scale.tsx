@@ -11,6 +11,7 @@ import {
   IconButton,
   Stack,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -26,6 +27,9 @@ interface DegreeProps {
   setAccidental: (acc: Accidental) => void;
   canRaise: boolean;
   canLower: boolean;
+
+  absolutePositionBgColor?: string;
+  absolutePositionColor?: string;
 
   info?: DegreeInfo;
 }
@@ -43,9 +47,22 @@ const degreeName = ({
   accidental === 'flat' ? `♭${no}` : accidental === 'sharp' ? `♯${no}` : no;
 
 const DegreeInformation = ({
-  relativePosition,
-  absolutePosition: { highCount, lowCount, neutralCount },
-}: DegreeInfo) => {
+  info,
+  absolutePositionBgColor,
+  absolutePositionColor,
+}: Pick<
+  DegreeProps,
+  'info' | 'absolutePositionBgColor' | 'absolutePositionColor'
+>) => {
+  if (!info) {
+    return <></>;
+  }
+
+  const {
+    relativePosition,
+    absolutePosition: { highCount, lowCount, neutralCount },
+  } = info;
+
   let color: ChipProps['color'];
   let name: string;
 
@@ -65,10 +82,11 @@ const DegreeInformation = ({
       name = 'низкая';
       break;
   }
+
   return (
     <>
       <p>
-        <em>Отн.</em> <Chip label={name} color={color} size="small" />
+        Отн.{' '}<Chip label={name} color={color} size="small" />
       </p>
       <Tooltip
         arrow
@@ -81,8 +99,15 @@ const DegreeInformation = ({
         }
       >
         <p>
-          Абс. {/*<Chip label={highCount-lowCount} size="small" />*/}
-          {highCount - lowCount}
+          Абс.{' '}
+          <Chip
+            label={String(highCount - lowCount).replace('-', '−')}
+            style={{
+              backgroundColor: absolutePositionBgColor,
+              color: absolutePositionColor,
+            }}
+            size="small"
+          />
         </p>
       </Tooltip>
     </>
@@ -101,7 +126,7 @@ const Degree: React.FC<DegreeProps> = ({
     <Card variant="outlined" sx={{ minWidth: '100px' }}>
       <CardHeader title={degreeName(restProps)} sx={{ textAlign: 'center' }} />
       <CardContent sx={{ textAlign: 'center' }}>
-        {info && <DegreeInformation {...info} />}
+        {info && <DegreeInformation {...restProps} />}
       </CardContent>
       <CardActions disableSpacing sx={{ justifyContent: 'center' }}>
         <IconButton
@@ -170,7 +195,26 @@ export function Scale() {
     return true;
   }
 
+  const theme = useTheme();
   const analysis = analyzeScale(degrees.map((d) => d.accidental));
+
+  const orderedColors = [
+    [theme.palette.low.dark, theme.palette.low.contrastText],
+    [theme.palette.low.main, theme.palette.low.contrastText],
+    [theme.palette.low.light, theme.palette.low.contrastText],
+    [undefined, undefined],
+    [theme.palette.high.light, theme.palette.high.contrastText],
+    [theme.palette.high.main, theme.palette.high.contrastText],
+    [theme.palette.high.dark, theme.palette.high.contrastText],
+  ];
+
+  const indices = [0, 1, 2, 3, 4, 5, 6].sort(
+    (a, b) =>
+      (analysis.degrees?.[a].absolutePosition.highCount ?? 0) -
+      (analysis.degrees?.[a].absolutePosition.lowCount ?? 0) -
+      ((analysis.degrees?.[b].absolutePosition.highCount ?? 0) -
+        (analysis.degrees?.[b].absolutePosition.lowCount ?? 0)),
+  );
 
   return (
     <Box
@@ -182,15 +226,22 @@ export function Scale() {
       }}
     >
       <Stack direction={'row'} spacing={2} sx={{ marginBottom: 2 }}>
-        {degrees.map((degree, idx) => (
-          <Degree
-            {...degree}
-            key={degree.no}
-            canLower={canChangeDegree(idx, 'lower')}
-            canRaise={canChangeDegree(idx, 'raise')}
-            info={analysis.degrees?.[idx]}
-          />
-        ))}
+        {degrees.map((degree, idx) => {
+          const orderedColor =
+            orderedColors[indices.findIndex((i) => idx === i)] ?? [];
+
+          return (
+            <Degree
+              {...degree}
+              key={degree.no}
+              canLower={canChangeDegree(idx, 'lower')}
+              canRaise={canChangeDegree(idx, 'raise')}
+              info={analysis.degrees?.[idx]}
+              absolutePositionBgColor={orderedColor[0]}
+              absolutePositionColor={orderedColor[1]}
+            />
+          );
+        })}
       </Stack>
 
       {analysis.errors && (
