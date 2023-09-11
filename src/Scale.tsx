@@ -86,7 +86,7 @@ const DegreeInformation = ({
   return (
     <>
       <p>
-        Отн.{' '}<Chip label={name} color={color} size="small" />
+        Отн. <Chip label={name} color={color} size="small" />
       </p>
       <Tooltip
         arrow
