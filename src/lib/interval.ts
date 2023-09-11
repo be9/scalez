@@ -3,7 +3,10 @@ export type Quality =
   | 'minor'
   | 'major'
   | 'augmented'
-  | 'diminished';
+  | 'diminished'
+  | 'double-augmented'
+  | 'double-diminished'
+  ;
 
 export interface Interval {
   /** 1..7 */
@@ -35,10 +38,12 @@ const INTERVALS: Array<Record<number, Quality>> = [
     4: 'diminished',
     5: 'perfect',
     6: 'augmented',
+    7: 'double-augmented',
   },
 
   // квинта
   {
+    5: 'double-diminished',
     6: 'diminished',
     7: 'perfect',
     8: 'augmented',
@@ -77,6 +82,7 @@ export function determineInterval(
     const quality = intDef[semDiff];
     return { quantity: diff + 1, quality };
   } else {
+    console.log(idx1, sem1, idx2, sem2);
     throw Error(
       `У интервала ${diff + 1} неправильное кол-во полутонов: ${semDiff}`,
     );

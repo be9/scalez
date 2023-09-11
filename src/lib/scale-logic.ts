@@ -54,6 +54,7 @@ export function analyzeScale(degrees: Array<Accidental>): ScaleAnalysis {
 
     switch (int.quality) {
       case 'diminished':
+      case 'double-diminished':
       case 'minor':
         relativePosition = 'low';
         break;
@@ -64,6 +65,7 @@ export function analyzeScale(degrees: Array<Accidental>): ScaleAnalysis {
 
       case 'major':
       case 'augmented':
+      case 'double-augmented':
         relativePosition = 'high';
         break;
 
@@ -82,6 +84,7 @@ export function analyzeScale(degrees: Array<Accidental>): ScaleAnalysis {
       switch (int2.quality) {
         case 'diminished':
         case 'minor':
+        case 'double-diminished':
           ++absolutePosition.highCount;
           break;
 
@@ -91,6 +94,7 @@ export function analyzeScale(degrees: Array<Accidental>): ScaleAnalysis {
 
         case 'major':
         case 'augmented':
+        case 'double-augmented':
           ++absolutePosition.lowCount;
           break;
 
