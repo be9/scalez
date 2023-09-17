@@ -48,14 +48,22 @@ const degreeName = ({
 
 const DegreeInformation = ({
   info,
+  no,
   absolutePositionBgColor,
   absolutePositionColor,
 }: Pick<
   DegreeProps,
-  'info' | 'absolutePositionBgColor' | 'absolutePositionColor'
+  'info' | 'absolutePositionBgColor' | 'absolutePositionColor' | 'no'
 >) => {
   if (!info) {
     return <></>;
+  }
+  if (no === 1) {
+    return (
+      <p>
+        <Chip label="устой лада" size="small" />
+      </p>
+    );
   }
 
   const {
@@ -120,7 +128,7 @@ const Degree: React.FC<DegreeProps> = ({
   canRaise,
   ...restProps
 }) => {
-  const { accidental, info } = restProps;
+  const { accidental, info, no } = restProps;
 
   return (
     <Card variant="outlined" sx={{ minWidth: '100px' }}>
@@ -128,26 +136,31 @@ const Degree: React.FC<DegreeProps> = ({
       <CardContent sx={{ textAlign: 'center' }}>
         {info && <DegreeInformation {...restProps} />}
       </CardContent>
-      <CardActions disableSpacing sx={{ justifyContent: 'center' }}>
-        <IconButton
-          aria-label="lower"
-          disabled={!canLower}
-          onClick={() => {
-            setAccidental(lowerDegree(accidental));
-          }}
-        >
-          <ArrowDropDownIcon />
-        </IconButton>
-        <IconButton
-          aria-label="raise"
-          disabled={!canRaise}
-          onClick={() => {
-            setAccidental(raiseDegree(accidental));
-          }}
-        >
-          <ArrowDropUpIcon />
-        </IconButton>
-      </CardActions>
+
+      {no > 1 ? (
+        <CardActions disableSpacing sx={{ justifyContent: 'center' }}>
+          <IconButton
+            aria-label="lower"
+            disabled={!canLower}
+            onClick={() => {
+              setAccidental(lowerDegree(accidental));
+            }}
+          >
+            <ArrowDropDownIcon />
+          </IconButton>
+          <IconButton
+            aria-label="raise"
+            disabled={!canRaise}
+            onClick={() => {
+              setAccidental(raiseDegree(accidental));
+            }}
+          >
+            <ArrowDropUpIcon />
+          </IconButton>
+        </CardActions>
+      ) : (
+        <></>
+      )}
     </Card>
   );
 };
