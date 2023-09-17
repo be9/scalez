@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -166,8 +167,10 @@ const Degree: React.FC<DegreeProps> = ({
 };
 
 export function Scale() {
-  const [degrees, setDegrees] = useState<Array<DegreeProps>>(
-    [...new Array(7).keys()].map((idx) => ({
+  const [degrees, setDegrees] = useState(cleanSlate());
+
+  function cleanSlate(): Array<DegreeProps> {
+    return [...new Array(7).keys()].map((idx) => ({
       no: idx + 1,
       accidental: 'natural',
       setAccidental: (acc) => {
@@ -175,8 +178,8 @@ export function Scale() {
       },
       canLower: true,
       canRaise: true,
-    })),
-  );
+    }));
+  }
 
   function setAccidental(idx: number, acc: Accidental) {
     setDegrees((degrees) => [
@@ -266,6 +269,18 @@ export function Scale() {
           ))}
         </Stack>
       )}
+
+      <Stack spacing={2}>
+        {analysis.tritones && <p>Тритонов: {analysis.tritones.length}</p>}
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setDegrees(cleanSlate());
+          }}
+        >
+          Сбросить
+        </Button>
+      </Stack>
     </Box>
   );
 }

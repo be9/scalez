@@ -17,6 +17,7 @@ export interface DegreeInfo {
 export interface ScaleAnalysis {
   errors?: Array<string>;
   degrees?: Array<DegreeInfo>;
+  tritones?: Array<[number, number]>;
 }
 
 const MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11];
@@ -45,6 +46,7 @@ export function analyzeScale(degrees: Array<Accidental>): ScaleAnalysis {
   }
 
   const degreeInfos: Array<DegreeInfo> = [];
+  const tritones: ScaleAnalysis['tritones'] = [];
 
   const twoOctaves = [...semitones, ...semitones.map((s) => 12 + s)];
 
@@ -101,6 +103,13 @@ export function analyzeScale(degrees: Array<Accidental>): ScaleAnalysis {
         default:
           throw Error(`неизвестное качество интервала: ${int.quality}`);
       }
+
+      if (twoOctaves[j] - twoOctaves[i] === 6) {
+        const j2 = j % 7;
+        if (i < j2) {
+          tritones.push([i, j2]);
+        }
+      }
     }
 
     degreeInfos.push({
@@ -109,7 +118,7 @@ export function analyzeScale(degrees: Array<Accidental>): ScaleAnalysis {
     });
   }
 
-  return { degrees: degreeInfos };
+  return { degrees: degreeInfos, tritones };
 }
 
 function shiftDegree(base: number, acc: Accidental): number {
